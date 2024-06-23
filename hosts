@@ -1,0 +1,1 @@
+54.214.68.84  ansible_ssh_private_key_file=/home/nour/test/new-folder/rkey.pem   ansible_user=ubuntu

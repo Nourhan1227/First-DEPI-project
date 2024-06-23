@@ -1,0 +1,57 @@
+---
+- name: install node and npm
+  hosts: 54.214.68.84
+  become: yes
+  tasks:
+    - name: update apt repo and cache
+      apt: update_cache=yes force_apt_get=yes  cache_valid_time=3600
+    - name: Install npm and node on the server
+      apt:
+        pkg:
+          - nodejs
+          - npm
+- name: create new user
+  hosts: 54.214.68.84
+  become: yes
+  tasks:
+    - name: create nodeapp user
+      user:
+        name: nodeapp-user
+        comment: this is a user for the app which is called nodels app
+        state: present
+        shell: /bin/bash
+
+- name: Copy Node artifact and unpack
+  hosts: 54.214.68.84
+  #become_user: nodeapp-user
+  #become: true
+  # vars:
+  #   - dest_path: /home/ubuntu
+  # vars_files: 
+  #   - /Ubuntu/home/nour/test/new-folder/project-vars.yaml
+
+  tasks:
+    # - name: copy the artifact to the server
+      # copy:
+      #   src: ./simple-nodejs-app/nodejs-app-1.0.0.tgz
+      #   dest: /home/ubuntu/app.tgz  
+    - name: Extract the nodejs app
+      unarchive:
+        src: ./simple-nodejs-app/nodejs-app-1.0.0.tgz
+        dest: /home/ubuntu
+        #remote_src: yes            
+    - name: install pckges dependencies
+      npm:
+        path: /home/ubuntu/package
+    - name: start the app.
+      command:
+        chdir: /home/ubuntu/package/app/
+        cmd: node server.js
+      async: 45
+      poll: 0
+    - name: make sure the app is running
+      shell: ps aux | grep node
+      register : app_status
+    - debug: msg="application status is:{{app_status.stdout}}"
+        
+        #remote_src: yes  
