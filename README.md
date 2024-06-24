@@ -1,7 +1,7 @@
 ...
 # first DEPI project
 
-## simple ansible project "install nodejs app"
+## simple ansible project "nodejs app"
 
 ### to prepare the app for startup, installing all the dependencies
 `npm install`
